@@ -200,7 +200,7 @@ class BlockInstance(BlockRoot):
     def __init__(self, block_value):
         self.block_value = block_value
         self.rubriques = [RubriqueValue(r) for r in self.block_value.block_conf.rubriques]
-        self.sub_blocks = [BlockValue(b) for b in self.block_value.block_conf]
+        self.sub_blocks = [BlockValue(b, self) for b in self.block_value.block_conf]
 
     def iterate_on_list(self):
         return self.sub_blocks
@@ -208,14 +208,21 @@ class BlockInstance(BlockRoot):
     def type_(self):
         return self.block_value.type_()
 
+    def name(self):
+        result = self.block_value.name()
+        if len(self.block_value.instances) > 1:
+            result += '/' + self.type_().name + str(self.block_value.instances.index(self) + 1)
+        return result
+
 
 class BlockValue(BlockRoot):
 
-    def __init__(self, block_conf, number=None):
+    def __init__(self, block_conf, parent_block_instance=None, number=None):
         self.block_conf = block_conf
+        self.parent_block_instance = parent_block_instance
         if number is None:
             number = self.block_conf.block_type.lower_bound
-            if not number and self.block_conf.block_type.upper_bound == '*':
+            if self.block_conf.block_type.upper_bound == '*':
                 number = 2
         self.block_conf.block_values.append(self)
 
@@ -226,3 +233,15 @@ class BlockValue(BlockRoot):
 
     def type_(self):
         return self.block_conf.type_()
+
+    def name(self):
+        if self.parent_block_instance:
+            parent_value = self.parent_block_instance.block_value
+            result = parent_value.name()
+
+            if parent_value.parent_block_instance and parent_value.type_().upper_bound == '*':
+                result += '/' + parent_value.type_().name + str(
+                    self.parent_block_instance.block_value.instances.index(
+                        self.parent_block_instance) + 1)
+            return result
+        return ''

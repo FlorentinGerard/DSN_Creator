@@ -51,7 +51,7 @@ class BlockConfInstance(QFrame):
         self.layout = QVBoxLayout()
         self.layout.setSpacing(0)
         self.label = QLabel()
-        self.label.setText(str(block))
+        self.label.setText(str(block) + ' '*5 + block.name())
         self.layout.addWidget(self.label)
         self.grid_layout = QGridLayout()
         self.grid_layout.setHorizontalSpacing(5)
