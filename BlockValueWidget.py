@@ -1,4 +1,5 @@
 from PyQt5.QtWidgets import *
+from RubriqueWidget import RubriqueValueFrame
 
 class BlockValueFrame(QFrame):
 
@@ -9,7 +10,7 @@ class BlockValueFrame(QFrame):
         self.block = block
 
         self.setFrameStyle(QFrame.Panel | QFrame.Plain)
-        self.setLineWidth(2)
+        self.setLineWidth(3)
 
         ''' 
         # Create main label of the frame
@@ -46,9 +47,15 @@ class BlockConfInstance(QFrame):
         self.block = block
 
         self.setFrameStyle(QFrame.Panel | QFrame.Plain)
-        self.setLineWidth(1)
+        self.setLineWidth(2)
         self.layout = QVBoxLayout()
+        self.layout.setSpacing(0)
         self.label = QLabel()
         self.label.setText(str(block))
         self.layout.addWidget(self.label)
+        self.grid_layout = QGridLayout()
+        self.grid_layout.setHorizontalSpacing(5)
+        for row, rubrique in enumerate(block.rubriques):
+            RubriqueValueFrame(rubrique, self.grid_layout, row)
+        self.layout.addLayout(self.grid_layout)
         self.setLayout(self.layout)

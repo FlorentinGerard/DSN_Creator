@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import *
-from BlockConfWidget import BlockConfWidget
 from ReadDsnNorm import *
+from BlockConfWidget import BlockConfWidget
 import sys
 
 app = QApplication(sys.argv)

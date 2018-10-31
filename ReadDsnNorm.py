@@ -61,14 +61,22 @@ for index, row in df_data_type.iterrows():
     args = {fd_data_type_index_mapping[key]: value for key, value in row.items()}
     DataType(**args)
 
-print('Block name max lenght')
+
 max_lenght_block = max(len(i.name) for i in BlockType.ids.values())
-[print(i, max_lenght_block) for i in BlockType.ids.values() if len(i.name) == max_lenght_block]
-print('\nRubrique name max lenght')
+[print('Block name max lenght:', max_lenght_block, i)
+    for i in BlockType.ids.values() if len(i.name) == max_lenght_block]
+
 max_lenght_rub = max(len(i.name) for i in RubriqueType.ids.values())
-[print(i, max_lenght_rub) for i in RubriqueType.ids.values() if len(i.name) == max_lenght_rub]
-print('\n\n')
-root.deep_print(print_rubriques=False)
+[print('Rubrique name max lenght:', max_lenght_rub, i)
+    for i in RubriqueType.ids.values() if len(i.name) == max_lenght_rub]
+
+MAX_DEPTH = max(BlockType.ids.values(), key=lambda i: i.depth).depth
+[print('MAX_DEPTH:', i, MAX_DEPTH)
+    for i in BlockType.ids.values() if i.depth == MAX_DEPTH]
+
+
+
+# root.deep_print(print_rubriques=False)
 
 bcr = BlockConf(root)
 bvr = BlockValue(bcr)
@@ -94,5 +102,4 @@ def print_bock_instance(bi):
         for sbi in bv:
             print_bock_instance(sbi)
 
-
-print_bock_instance(bir)
+#print_bock_instance(bir)

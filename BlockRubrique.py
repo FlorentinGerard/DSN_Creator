@@ -71,17 +71,23 @@ class BlockType(BlockRoot):
         self.description = description
         self.sub_blocks = []
         self.rubriques = []
+        # depth is set in append_in_parent(...)
+        self.depth = 0
         BlockType.ids[id] = self
 
     def append(self, id, name, description='', lower_bound=1, upper_bound=1):
-        self.sub_blocks.append(BlockType(id, name, description, lower_bound, upper_bound))
+        sub_block = BlockType(id, name, description, lower_bound, upper_bound)
+        self.sub_blocks.append(sub_block)
+        return sub_block
 
     def iterate_on_list(self):
         return self.sub_blocks
 
     @classmethod
     def append_in_parent(cls, parent_id, id, name, description='', lower_bound=1, upper_bound=1):
-        cls.ids[parent_id].append(id, name, description, lower_bound, upper_bound)
+        parent_block = cls.ids[parent_id]
+        sub_block = parent_block.append(id, name, description, lower_bound, upper_bound)
+        sub_block.depth = parent_block.depth + 1
 
     @classmethod
     def append_rubrique(cls, block_id, id, name, full_name, description, data_type_id):

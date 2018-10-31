@@ -1,7 +1,9 @@
 from PyQt5.QtWidgets import *
 import PyQt5.QtCore as Qt
 from BlockValueWidget import BlockValueFrame
+from ReadDsnNorm import MAX_DEPTH
 
+DEPTH_SHIFT = 60
 
 class BlockConfWidget(QWidget):
 
@@ -34,7 +36,6 @@ class BlockConfWidget(QWidget):
 
         # Layout for the frame
         self.frameLayout = QVBoxLayout()
-        self.setMinimumWidth(1000)
         self.first_line_layout = QHBoxLayout()
         self.first_line_layout.addWidget(self.front_check_box)
         self.first_line_layout.addWidget(self.main_label)
@@ -48,9 +49,10 @@ class BlockConfWidget(QWidget):
         # Layout of the widget
         self.layout = QHBoxLayout()
         self.layout.setContentsMargins(0, 0, 0, 0)
-        self.layout.addSpacing(depth * 60)
+        self.layout.addSpacing(depth * DEPTH_SHIFT)
         self.layout.addWidget(self.frame)
-        #self.layout.addStretch()
+        self.layout.addSpacing((MAX_DEPTH - depth + 1) * DEPTH_SHIFT)
+
         self.setLayout(self.layout)
         self.master_layout.addWidget(self)
         for sub_block in block:
