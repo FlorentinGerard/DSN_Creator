@@ -4,6 +4,7 @@ from BlockConfWidget import BlockConfWidget
 import sys
 
 app = QApplication(sys.argv)
+app.setStyle(QStyleFactory.create("Fusion"))
 mainWindow = QMainWindow()
 mainWindow.resize(1200, 800)
 
@@ -17,4 +18,7 @@ wLayout = QVBoxLayout()
 b = BlockConfWidget(wLayout, bcr, 0)
 w.setLayout(wLayout)
 mainWindow.show()
-app.exec_()
+try:
+    app.exec_()
+except Exception as e:
+    print(e)

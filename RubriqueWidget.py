@@ -7,12 +7,6 @@ class RubriqueValueFrame(QWidget):
 
         super().__init__()
         self.rubrique = rubrique
-
-        #self.setFrameStyle(QFrame.Panel | QFrame.Plain)
-        #self.setLineWidth(1)
-        #self.layout = QHBoxLayout()
-        #self.layout.setContentsMargins(2, 2, 2, 2)
-
         self.check_box = QCheckBox()
         self.name_label = QLabel()
         self.name_label.setText(str(rubrique.type_().id) + ' ' + rubrique.type_().name)
@@ -27,6 +21,10 @@ class RubriqueValueFrame(QWidget):
         grid_layout.addWidget(self.check_box, vertical_rank, 0)
         grid_layout.addWidget(self.name_label, vertical_rank, 1)
         grid_layout.addWidget(self.value, vertical_rank, 2)
-        #self.setLayout(self.layout)
+        self.check_box.stateChanged.connect(self.on_state_change)
+
+    def on_state_change(self, state):
+        self.rubrique.is_enabled = bool(state)
+
 
 

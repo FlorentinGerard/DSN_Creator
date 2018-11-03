@@ -5,6 +5,7 @@ from ReadDsnNorm import MAX_DEPTH
 
 DEPTH_SHIFT = 60
 
+
 class BlockConfWidget(QWidget):
 
     def __init__(self, master_layout, block, depth=0):
@@ -21,7 +22,7 @@ class BlockConfWidget(QWidget):
 
         # Create front check box (disable config block and children if unchecked)
         self.front_check_box = QCheckBox()
-        # Can not be unchecked if minumim block number is 1 or greater
+        # Can not be unchecked if minimum block number is 1 or greater
         if block.block_type.lower_bound > 0:
             self.front_check_box.setCheckState(Qt.Qt.PartiallyChecked)
             self.front_check_box.setEnabled(False)
@@ -33,16 +34,30 @@ class BlockConfWidget(QWidget):
         self.main_label = QLabel()
         self.main_label.setText(str(block))
         self.main_label.setMaximumWidth(400)
+        self.showContent = QPushButton()
+        self.showContent.setText('Hide')
+        self.showContent.setCheckable(True)
+        self.showContent.toggled.connect(self.hide_show_content)
 
-        # Layout for the frame
-        self.frameLayout = QVBoxLayout()
+        # Top of the block conf (first_line_layout)
         self.first_line_layout = QHBoxLayout()
         self.first_line_layout.addWidget(self.front_check_box)
         self.first_line_layout.addWidget(self.main_label)
         self.first_line_layout.addStretch()
+
+        if len(self.block):
+            self.display_children = QPushButton()
+            self.display_children.setText('All children')
+            self.display_children.setCheckable(True)
+            self.display_children.toggled.connect(self.hide_show_children)
+            self.first_line_layout.addWidget(self.display_children)
+        self.first_line_layout.addWidget(self.showContent)
+
+        # Layout for the frame
+        self.frameLayout = QVBoxLayout()
         self.frameLayout.addLayout(self.first_line_layout)
-        for bv in self.block.block_values:
-            self.frameLayout.addWidget(BlockValueFrame(bv))
+        self.block_values = [BlockValueFrame(bv) for bv in self.block.block_values]
+        [self.frameLayout.addWidget(w) for w in self.block_values]
         self.frame.setLayout(self.frameLayout)
         self.frameLayout.setContentsMargins(5, 5, 5, 5)
 
@@ -68,3 +83,11 @@ class BlockConfWidget(QWidget):
         for sb in self.subs:
             sb.setVisible(state)
             sb.set_subs_visible(state)
+
+    def hide_show_content(self, toggled):
+        [w.setVisible(not toggled) for w in self.block_values]
+        self.showContent.setText('Show' if toggled else 'Hide')
+
+    def hide_show_children(self, toggled):
+
+        [w.setVisible(not toggled) for w in self.subs if not w.block.is_enabled]

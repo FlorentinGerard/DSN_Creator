@@ -210,8 +210,9 @@ class BlockInstance(BlockRoot):
 
     def name(self):
         result = self.block_value.name()
+        result += ('/' if result else '') + self.type_().name
         if len(self.block_value.instances) > 1:
-            result += '/' + self.type_().name + str(self.block_value.instances.index(self) + 1)
+            result += '_' + str(self.block_value.instances.index(self) + 1)
         return result
 
 
@@ -240,7 +241,7 @@ class BlockValue(BlockRoot):
             result = parent_value.name()
 
             if parent_value.parent_block_instance and parent_value.type_().upper_bound == '*':
-                result += '/' + parent_value.type_().name + str(
+                result += ('/' if result else '') + parent_value.type_().name + '_' + str(
                     self.parent_block_instance.block_value.instances.index(
                         self.parent_block_instance) + 1)
             return result
