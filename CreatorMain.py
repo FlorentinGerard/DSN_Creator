@@ -16,6 +16,7 @@ w = QWidget()
 sa.setWidget(w)
 wLayout = QVBoxLayout()
 b = BlockConfWidget(wLayout, bcr, 0)
+wLayout.addStretch()
 w.setLayout(wLayout)
 mainWindow.show()
 try:

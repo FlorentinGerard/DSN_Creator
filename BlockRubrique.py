@@ -1,6 +1,13 @@
 from abc import ABC, abstractmethod
+from enum import Enum
 
 import numpy as np
+
+
+class DisplaySubs(Enum):
+    ALL = 0
+    SELECTED = 1
+    NONE = 2
 
 
 class DsnRoot:
@@ -187,6 +194,7 @@ class BlockConf(BlockRoot):
         self.sub_blocks = [BlockConf(b) for b in block_type]
         self.is_enabled = is_enabled or self.block_type.lower_bound > 0
         self.block_values = []
+        self.display_subs = DisplaySubs.ALL
 
     def iterate_on_list(self):
         return self.sub_blocks

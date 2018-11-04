@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import *
 import PyQt5.QtCore as Qt
 from BlockValueWidget import BlockValueFrame
+from BlockRubrique import DisplaySubs
 from ReadDsnNorm import MAX_DEPTH
 
 DEPTH_SHIFT = 60
@@ -46,11 +47,14 @@ class BlockConfWidget(QWidget):
         self.first_line_layout.addStretch()
 
         if len(self.block):
-            self.display_children = QPushButton()
-            self.display_children.setText('All children')
-            self.display_children.setCheckable(True)
-            self.display_children.toggled.connect(self.hide_show_children)
-            self.first_line_layout.addWidget(self.display_children)
+            self.display_children_group = QButtonGroup()
+            self.display_children_label = QLabel(text='Children displayed:')
+            self.display_children_buttons = (QRadioButton(text='All'),
+                                             QRadioButton(text='Selected'), QRadioButton(text='None'))
+            [self.display_children_group.addButton(b) for b in self.display_children_buttons]
+            self.first_line_layout.addWidget(self.display_children_label)
+            [self.first_line_layout.addWidget(b) for b in self.display_children_buttons]
+            self.display_children_group.buttonClicked.connect(self.hide_show_children)
         self.first_line_layout.addWidget(self.showContent)
 
         # Layout for the frame
@@ -79,15 +83,27 @@ class BlockConfWidget(QWidget):
         self.block.is_enabled = bool(state)
         self.set_subs_visible(bool(state))
 
-    def set_subs_visible(self, state):
+    def set_subs_visible(self, state, enabled_only=False):
         for sb in self.subs:
-            sb.setVisible(state)
-            sb.set_subs_visible(state)
+            if enabled_only:
+                if sb.block.is_enabled:
+                    sb.setVisible(state)
+                else:
+                    sb.setVisible(not state)
+            else:
+                sb.setVisible(state)
+            sb.set_subs_visible(state, enabled_only)
 
     def hide_show_content(self, toggled):
         [w.setVisible(not toggled) for w in self.block_values]
         self.showContent.setText('Show' if toggled else 'Hide')
 
-    def hide_show_children(self, toggled):
-
-        [w.setVisible(not toggled) for w in self.subs if not w.block.is_enabled]
+    def hide_show_children(self, button):
+        rank = self.display_children_buttons.index(button)
+        self.block.display_subs = DisplaySubs(rank)
+        if rank == 0:
+            self.set_subs_visible(True)
+        elif rank == 1:
+            self.set_subs_visible(True, enabled_only=True)
+        else:
+            self.set_subs_visible(False)
