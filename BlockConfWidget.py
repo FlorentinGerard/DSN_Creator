@@ -9,12 +9,13 @@ DEPTH_SHIFT = 60
 
 class BlockConfWidget(QWidget):
 
-    def __init__(self, master_layout, block, depth=0):
+    def __init__(self, master_layout, block, depth=0, parent=None):
         self.subs = []
 
         super().__init__()
         self.block = block
         self.master_layout = master_layout
+        self.parent = parent
 
         # Create frame
         self.frame = QFrame()
@@ -36,7 +37,6 @@ class BlockConfWidget(QWidget):
         self.main_label.setText(str(block))
         self.main_label.setMaximumWidth(400)
         self.showContent = QPushButton()
-        self.showContent.setText('Hide')
         self.showContent.setCheckable(True)
         self.showContent.toggled.connect(self.hide_show_content)
 
@@ -49,8 +49,8 @@ class BlockConfWidget(QWidget):
         if len(self.block):
             self.display_children_group = QButtonGroup()
             self.display_children_label = QLabel(text='Children displayed:')
-            self.display_children_buttons = (QRadioButton(text='All'),
-                                             QRadioButton(text='Selected'), QRadioButton(text='None'))
+            self.display_children_buttons = (QRadioButton(text='None'),
+                                             QRadioButton(text='Selected'), QRadioButton(text='All'))
             [self.display_children_group.addButton(b) for b in self.display_children_buttons]
             self.first_line_layout.addWidget(self.display_children_label)
             [self.first_line_layout.addWidget(b) for b in self.display_children_buttons]
@@ -75,13 +75,20 @@ class BlockConfWidget(QWidget):
         self.setLayout(self.layout)
         self.master_layout.addWidget(self)
         for sub_block in block:
-            self.subs.append(BlockConfWidget(master_layout, sub_block, depth + 1))
+            self.subs.append(BlockConfWidget(master_layout, sub_block, depth + 1, self))
         if not self.block.is_enabled:
-            self.set_subs_visible(False)
+            self.set_subs_visible_recursively(0)
+        else:
+            self.set_subs_visible(self.block.display_subs.value)
+
+        self.showContent.setChecked(self.block.show_content)
+        self.hide_show_content(self.block.show_content)
 
     def on_state_change(self, state):
         self.block.is_enabled = bool(state)
-        self.set_subs_visible(state)
+        self.set_subs_visible_recursively(state)
+        if not state and self.parent and self.parent.block.display_subs == DisplaySubs.SELECTED:
+            self.hide()
 
     def set_subs_visible(self, state):
         self.block.display_subs = DisplaySubs(state)
@@ -95,12 +102,17 @@ class BlockConfWidget(QWidget):
                     sb.setVisible(False)
             else:
                 sb.setVisible(bool(state))
-            sb.set_subs_visible(state)
+
+    def set_subs_visible_recursively(self, state):
+        self.set_subs_visible(state)
+        for sb in self.subs:
+            sb.set_subs_visible_recursively(state)
 
     def hide_show_content(self, toggled):
-        [w.setVisible(not toggled) for w in self.block_values]
-        self.showContent.setText('Show' if toggled else 'Hide')
+        self.block.show_content = toggled
+        [w.setVisible(toggled) for w in self.block_values]
+        self.showContent.setText('Reduce' if toggled else 'Expand')
 
     def hide_show_children(self, button):
         rank = self.display_children_buttons.index(button)
-        self.set_subs_visible(rank)
+        self.set_subs_visible_recursively(rank)
