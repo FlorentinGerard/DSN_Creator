@@ -81,18 +81,21 @@ class BlockConfWidget(QWidget):
 
     def on_state_change(self, state):
         self.block.is_enabled = bool(state)
-        self.set_subs_visible(bool(state))
+        self.set_subs_visible(state)
 
-    def set_subs_visible(self, state, enabled_only=False):
+    def set_subs_visible(self, state):
+        self.block.display_subs = DisplaySubs(state)
+        if hasattr(self, 'display_children_group'):
+            self.display_children_buttons[state].setChecked(True)
         for sb in self.subs:
-            if enabled_only:
+            if state == 1:
                 if sb.block.is_enabled:
-                    sb.setVisible(state)
+                    sb.setVisible(True)
                 else:
-                    sb.setVisible(not state)
+                    sb.setVisible(False)
             else:
-                sb.setVisible(state)
-            sb.set_subs_visible(state, enabled_only)
+                sb.setVisible(bool(state))
+            sb.set_subs_visible(state)
 
     def hide_show_content(self, toggled):
         [w.setVisible(not toggled) for w in self.block_values]
@@ -100,10 +103,4 @@ class BlockConfWidget(QWidget):
 
     def hide_show_children(self, button):
         rank = self.display_children_buttons.index(button)
-        self.block.display_subs = DisplaySubs(rank)
-        if rank == 0:
-            self.set_subs_visible(True)
-        elif rank == 1:
-            self.set_subs_visible(True, enabled_only=True)
-        else:
-            self.set_subs_visible(False)
+        self.set_subs_visible(rank)
