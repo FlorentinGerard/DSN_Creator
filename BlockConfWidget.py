@@ -60,7 +60,7 @@ class BlockConfWidget(QWidget):
         # Layout for the frame
         self.frameLayout = QVBoxLayout()
         self.frameLayout.addLayout(self.first_line_layout)
-        self.block_values = [BlockValueFrame(bv) for bv in self.block.block_values]
+        self.block_values = [BlockValueFrame(bv, self) for bv in self.block.block_values]
         [self.frameLayout.addWidget(w) for w in self.block_values]
         self.frame.setLayout(self.frameLayout)
         self.frameLayout.setContentsMargins(5, 5, 5, 5)

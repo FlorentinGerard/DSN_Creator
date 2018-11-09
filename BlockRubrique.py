@@ -238,6 +238,11 @@ class BlockValue(BlockRoot):
 
         self.instances = [BlockInstance(self) for _ in range(number)]
 
+    def add_instance(self):
+        bi = BlockInstance(self)
+        self.instances.append(bi)
+        return bi
+
     def iterate_on_list(self):
         return self.instances
 

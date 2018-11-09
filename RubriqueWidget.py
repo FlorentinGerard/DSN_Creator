@@ -25,6 +25,3 @@ class RubriqueValueFrame(QWidget):
 
     def on_state_change(self, state):
         self.rubrique.is_enabled = bool(state)
-
-
-
