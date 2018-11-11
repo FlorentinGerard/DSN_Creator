@@ -32,31 +32,38 @@ class BlockValueFrame(QFrame):
         self.add_instance(block_instance)
 
     def add_instance(self, block_instance):
-        instance = BlockConfInstance(block_instance)
+        instance = BlockInstanceFrame(block_instance)
         self.instances.append(instance)
         self.layout.addWidget(instance)
 
     def update_instances(self):
+        instances_iter = iter(self.instances)
+        for block_instance in self.block:
+            try:
+                block_instance_frame = next(instances_iter)
+            except StopIteration:
+                self.add_instance(block_instance)
+            if block_instance != block_instance_frame.instance
 
 
 
 
 
-class BlockConfInstance(QFrame):
+class BlockInstanceFrame(QFrame):
 
-    def __init__(self, block):
+    def __init__(self, instance):
         super().__init__()
-        self.block = block
+        self.instance = instance
         self.setFrameStyle(QFrame.Panel | QFrame.Plain)
         self.setLineWidth(2)
         self.layout = QVBoxLayout()
         self.layout.setSpacing(0)
         self.label = QLabel()
-        self.label.setText(block.name())
+        self.label.setText(self.instance.name())
         self.layout.addWidget(self.label)
         self.grid_layout = QGridLayout()
         self.grid_layout.setHorizontalSpacing(5)
-        for row, rubrique in enumerate(block.rubriques):
+        for row, rubrique in enumerate(self.instance.rubriques):
             RubriqueValueFrame(rubrique, self.grid_layout, row)
         self.layout.addSpacing(10)
         self.layout.addLayout(self.grid_layout)
