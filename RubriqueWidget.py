@@ -10,7 +10,6 @@ class RubriqueValueFrame(QWidget):
         self.check_box = QCheckBox()
         self.name_label = QLabel()
         self.name_label.setText(str(rubrique.type_().id) + ' ' + rubrique.type_().name)
-        print(type(self.rubrique.type_()))
         values = ['='.join(val)[:70] for val
                   in self.rubrique.type_().data_type().values]
         if values:

@@ -43,9 +43,6 @@ class BlockValueFrame(QFrame):
                 block_instance_frame = next(instances_iter)
             except StopIteration:
                 self.add_instance(block_instance)
-            if block_instance != block_instance_frame.instance
-
-
 
 
 

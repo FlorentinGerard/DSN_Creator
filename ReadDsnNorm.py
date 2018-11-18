@@ -62,19 +62,17 @@ for index, row in df_data_type.iterrows():
     DataType(**args)
 
 
-max_lenght_block = max(len(i.name) for i in BlockType.ids.values())
-[print('Block name max lenght:', max_lenght_block, i)
-    for i in BlockType.ids.values() if len(i.name) == max_lenght_block]
+MAX_LENGTH_BLOCK = max(len(i.name) for i in BlockType.ids.values())
+[print('Block name max length:', MAX_LENGTH_BLOCK, i)
+ for i in BlockType.ids.values() if len(i.name) == MAX_LENGTH_BLOCK]
 
-max_lenght_rub = max(len(i.name) for i in RubriqueType.ids.values())
-[print('Rubrique name max lenght:', max_lenght_rub, i)
-    for i in RubriqueType.ids.values() if len(i.name) == max_lenght_rub]
+MAX_LENGTH_RUBRIQUE = max(len(i.name) for i in RubriqueType.ids.values())
+[print('Rubrique name max length:', MAX_LENGTH_RUBRIQUE, i)
+ for i in RubriqueType.ids.values() if len(i.name) == MAX_LENGTH_RUBRIQUE]
 
 MAX_DEPTH = max(BlockType.ids.values(), key=lambda i: i.depth).depth
 [print('MAX_DEPTH:', i, MAX_DEPTH)
     for i in BlockType.ids.values() if i.depth == MAX_DEPTH]
-
-
 
 # root.deep_print(print_rubriques=False)
 
